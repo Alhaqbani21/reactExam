@@ -1,0 +1,42 @@
+function handleLogin() {
+  let valid = true;
+
+  if (inputEmail === '') {
+    valid = false;
+    setEmailAlert('border-red-400');
+  } else if (!/\S+@\S+\.\S+/.test(inputEmail)) {
+    valid = false;
+    setEmailAlert('border-red-400');
+  } else {
+    setEmailAlert('');
+  }
+
+  if (inputPassword.length < 5) {
+    valid = false;
+    setPasswordAlert('border-red-400');
+  } else {
+    setPasswordAlert('');
+  }
+
+  if (valid) {
+    axios.get(urlUsers).then((response) => {
+      console.log(response);
+
+      if (response.data) {
+        const dataFound = response.data.find((e) => {
+          return e.email === inputEmail && e.password === inputPassword;
+        });
+        if (dataFound) {
+          setInputEmail('');
+          setInputPassword('');
+          localStorage.setItem('userName', dataFound.userName);
+          localStorage.setItem('email', dataFound.email);
+          localStorage.setItem('id', dataFound.id);
+          localStorage.setItem('avatar', dataFound.avatar);
+          localStorage.setItem('isPremium', dataFound.isPremium);
+          navigate('../');
+        }
+      }
+    });
+  }
+}
